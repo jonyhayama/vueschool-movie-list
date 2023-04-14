@@ -1,14 +1,15 @@
 <script setup>
-import { useFetch } from '@vueuse/core'
+import { useFetch, refDebounced } from '@vueuse/core'
 import { ref, computed } from 'vue';
 
 const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
-const search = "harry potter";
+const searchInput = ref("harry potter");
+const search = refDebounced(searchInput, 500);
 const resultsPerPage = 10;
 const currentPage = ref(1);
 const totalResults = ref(0);
 const movies = ref([]);
-const url = computed(() => `http://www.omdbapi.com/?apikey=${API_KEY}&s=${search}&type=movie&page=${currentPage.value}`);
+const url = computed(() => `http://www.omdbapi.com/?apikey=${API_KEY}&s=${search.value}&type=movie&page=${currentPage.value}`);
 const totalPages = computed(() => {
   if (!totalResults.value) {
     return 1;
@@ -32,8 +33,9 @@ const changePage = (event) => {
 
 <template>
   <div role="document">
-    <template v-if="error">
-      Error: {{ error }}
+    <input type="search" placeholder="Search a Movie..." v-model="searchInput" :aria-busy="isFetching">
+    <template v-if="error || rawData?.Error">
+      Error: {{ error || rawData?.Error }}
     </template>
     <div v-else-if="isFetching">loading...</div>
     <template v-else>
