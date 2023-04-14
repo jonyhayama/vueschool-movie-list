@@ -3,7 +3,7 @@ import { useFetch, refDebounced } from '@vueuse/core'
 import { ref, computed } from 'vue';
 
 const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
-const searchInput = ref("harry potter");
+const searchInput = ref("");
 const search = refDebounced(searchInput, 500);
 const resultsPerPage = 10;
 const currentPage = ref(1);
@@ -19,6 +19,15 @@ const totalPages = computed(() => {
 });
 const { isFetching, error, data: rawData } = useFetch(url, {
   refetch: true,
+  beforeFetch({ options, cancel }) {
+    if (search.value.length < 5) {
+      cancel();
+    }
+
+    return {
+      options
+    }
+  },
   afterFetch(ctx) {
     totalResults.value = parseInt(ctx.data.totalResults, 10);
     movies.value = ctx.data.Search;
@@ -38,7 +47,10 @@ const changePage = (event) => {
       Error: {{ error || rawData?.Error }}
     </template>
     <div v-else-if="isFetching">loading...</div>
-    <template v-else>
+    <template v-if="search.length > 1 && search.length < 5">
+      Please type at leaset 5 characters to search.
+    </template>
+    <template v-else-if="search">
       <table>
         <thead>
           <tr>
