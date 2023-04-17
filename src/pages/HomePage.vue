@@ -61,9 +61,16 @@ const changePage = (event) => {
 
 <template>
   <div role="document">
-    <input type="search" placeholder="Search a Movie by title..." v-model="searchInput" :aria-busy="isFetching">
-    <input type="number" :min="FIRST_MOVIE_RELEASE_YEAR" :max="CURRENT_YEAR" placeholder="Release Year"
-      v-model="yearInput" :aria-busy="isFetching">
+    <div class="grid">
+      <div>
+        <input type="search" class="title-input" placeholder="Search a Movie by title..." v-model="searchInput"
+          :aria-busy="isFetching">
+      </div>
+      <div>
+        <input type="number" class="release-year-input" :min="FIRST_MOVIE_RELEASE_YEAR" :max="CURRENT_YEAR"
+          placeholder="Release Year" v-model="yearInput" :aria-busy="isFetching">
+      </div>
+    </div>
     <template v-if="error || rawData?.Error">
       Error: {{ error || rawData?.Error }}
     </template>
@@ -108,3 +115,24 @@ const changePage = (event) => {
     </template>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.release-year-input {
+  border-radius: 5em;
+}
+
+@media screen and (min-width: 992px) {
+  .grid {
+    grid-template-columns: 3fr 1fr;
+    grid-column-gap: 0;
+  }
+
+  .title-input {
+    border-radius: 5em 0 0 5em !important;
+  }
+
+  .release-year-input {
+    border-radius: 0 5em 5em 0;
+  }
+}
+</style>
