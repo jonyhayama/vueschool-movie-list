@@ -2,14 +2,18 @@
 import { useFetch, refDebounced } from '@vueuse/core'
 import { ref, computed } from 'vue';
 
+const FIRST_MOVIE_RELEASE_YEAR = 1888;
+const CURRENT_YEAR = new Date().getFullYear();
 const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
 const searchInput = ref("");
 const search = refDebounced(searchInput, 500);
+const yearInput = ref("");
+const year = refDebounced(yearInput, 500);
 const resultsPerPage = 10;
 const currentPage = ref(1);
 const totalResults = ref(0);
 const movies = ref([]);
-const url = computed(() => `http://www.omdbapi.com/?apikey=${API_KEY}&s=${search.value}&type=movie&page=${currentPage.value}`);
+const url = computed(() => `http://www.omdbapi.com/?apikey=${API_KEY}&s=${search.value}&type=movie&page=${currentPage.value}&y=${year.value}`);
 const totalPages = computed(() => {
   if (!totalResults.value) {
     return 1;
@@ -17,10 +21,25 @@ const totalPages = computed(() => {
 
   return Math.ceil(totalResults.value / resultsPerPage);
 });
+const looksLikeMovieYear = computed(() => {
+  const val = parseInt(year.value, 10);
+  return FIRST_MOVIE_RELEASE_YEAR <= val && val <= CURRENT_YEAR;
+})
+const validRequest = computed(() => {
+  if (search.value.length < 5) {
+    return false;
+  }
+
+  if (year.value.length > 0 && !looksLikeMovieYear.value) {
+    return false;
+  }
+
+  return true;
+})
 const { isFetching, error, data: rawData } = useFetch(url, {
   refetch: true,
   beforeFetch({ options, cancel }) {
-    if (search.value.length < 5) {
+    if (!validRequest.value) {
       cancel();
     }
 
@@ -42,15 +61,22 @@ const changePage = (event) => {
 
 <template>
   <div role="document">
-    <input type="search" placeholder="Search a Movie..." v-model="searchInput" :aria-busy="isFetching">
+    <input type="search" placeholder="Search a Movie by title..." v-model="searchInput" :aria-busy="isFetching">
+    <input type="number" :min="FIRST_MOVIE_RELEASE_YEAR" :max="CURRENT_YEAR" placeholder="Release Year"
+      v-model="yearInput" :aria-busy="isFetching">
     <template v-if="error || rawData?.Error">
       Error: {{ error || rawData?.Error }}
     </template>
     <div v-else-if="isFetching">loading...</div>
-    <template v-if="search.length > 1 && search.length < 5">
-      Please type at leaset 5 characters to search.
+    <template v-if="!validRequest">
+      <template v-if="search.length < 5">
+        Please type at leaset 5 characters to search.
+      </template>
+      <template v-if="year.length > 1 && !looksLikeMovieYear(year)">
+        Please type a valid release year (from {{ FIRST_MOVIE_RELEASE_YEAR }} to {{ CURRENT_YEAR }})
+      </template>
     </template>
-    <template v-else-if="search">
+    <template v-else>
       <table>
         <thead>
           <tr>
