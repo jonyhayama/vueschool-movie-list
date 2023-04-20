@@ -13,6 +13,22 @@ const resultsPerPage = 10;
 const currentPage = ref(1);
 const totalResults = ref(0);
 const movies = ref([]);
+
+const movieRatings = ref({
+  "tt1201607": [3],
+  "tt0241527": [0],
+  "tt0295297": [1, 2, 3]
+})
+const getMovieRating = (imdbID) => {
+  const ratings = movieRatings.value[imdbID];
+
+  if (!ratings || ratings.length === 0) {
+    return null;
+  }
+
+  return ratings.reduce((acc, i) => acc + i, 0) / ratings.length;
+}
+
 const url = computed(() => `http://www.omdbapi.com/?apikey=${API_KEY}&s=${search.value}&type=movie&page=${currentPage.value}&y=${year.value}`);
 const totalPages = computed(() => {
   if (!totalResults.value) {
@@ -89,12 +105,14 @@ const changePage = (event) => {
           <tr>
             <th>Title</th>
             <th>Release Year</th>
+            <th>Rating</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="movie in movies">
             <td>{{ movie.Title }}</td>
             <td>{{ movie.Year }}</td>
+            <td>{{ getMovieRating(movie.imdbID) ?? 'not rated' }}</td>
           </tr>
         </tbody>
       </table>
