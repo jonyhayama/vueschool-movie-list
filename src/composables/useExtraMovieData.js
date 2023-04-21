@@ -2,7 +2,8 @@ import { useStorage } from '@vueuse/core'
 
 const properties = {
   "Ratings": {},
-  "Reviews": {}
+  "Reviews": {},
+  "MyLists": {}
 };
 const propertiesKeys = Object.keys(properties);
 
