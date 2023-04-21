@@ -26,6 +26,18 @@ const rating = ref(5);
         <p>Released on {{ movie.Year }}</p>
         <p>IMDB id {{ movie.imdbID }}</p>
         <p>Rating: {{ movie.rating ?? 'not rated' }}</p>
+        <p>Reviews:</p>
+        <div v-if="!movie.reviews">
+          No reviews yet
+        </div>
+        <template v-else>
+          <div v-for="(review, index) in movie.reviews" :key="index">
+            {{ review }}
+          </div>
+        </template>
+
+        <hr />
+
         <details>
           <summary>Add Rating</summary>
           <select v-model="rating">

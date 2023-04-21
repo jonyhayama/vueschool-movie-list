@@ -42,6 +42,9 @@ const getMovieRating = (imdbID) => {
 
   return (ratings.reduce((acc, i) => acc + i, 0) / ratings.length).toFixed(1).replace('.0', '');
 }
+const movieReviews = ref({
+  tt1201607: ['review 1', 'review 2']
+})
 
 const url = computed(() => `http://www.omdbapi.com/?apikey=${API_KEY}&s=${search.value}&type=movie&page=${currentPage.value}&y=${year.value}`);
 const totalPages = computed(() => {
@@ -81,7 +84,8 @@ const { isFetching, error, data: rawData } = useFetch(url, {
     totalResults.value = parseInt(ctx.data.totalResults, 10);
     movies.value = ctx.data.Search.map(movie => ({
       ...movie,
-      rating: getMovieRating(movie.imdbID)
+      rating: getMovieRating(movie.imdbID),
+      reviews: movieReviews.value[movie.imdbID]
     }));
 
     return ctx;
@@ -123,6 +127,7 @@ const changePage = (event) => {
             <th>Title</th>
             <th>Release Year</th>
             <th>Rating</th>
+            <th>Reviews</th>
           </tr>
         </thead>
         <tbody>
@@ -130,6 +135,7 @@ const changePage = (event) => {
             <td>{{ movie.Title }}</td>
             <td>{{ movie.Year }}</td>
             <td>{{ movie.rating ?? 'not rated' }}</td>
+            <td>{{ movie.reviews?.length ?? 0 }}</td>
           </tr>
         </tbody>
       </table>
