@@ -1,10 +1,18 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useExtraMovieData } from '@/composables/useExtraMovieData';
+import MyListModal from "../components/MyListModal.vue";
 
 const { MyLists } = useExtraMovieData();
 const newListName = ref("");
 const createListForm = ref(null);
+const modalValue = ref(false);
+const selectedList = ref(null);
+
+const openListModal = (list) => {
+  selectedList.value = list;
+  modalValue.value = true;
+}
 
 const movieLists = computed(() => Object.entries(MyLists.ref.value || {}).map(([name, movies]) => ({ name, movies })));
 const createList = () => {
@@ -38,11 +46,12 @@ const createList = () => {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="list in movieLists" :key="list.name">
+        <tr v-for="list in movieLists" :key="list.name" @click="openListModal(list)">
           <td>{{ list.name }}</td>
           <td>{{ list.movies.length }}</td>
         </tr>
       </tbody>
     </table>
+    <MyListModal :list="selectedList" v-model:open="modalValue" />
   </div>
 </template>
