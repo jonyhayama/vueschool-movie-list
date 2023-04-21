@@ -24,26 +24,20 @@ const openMovieModal = (movie) => {
 }
 const handleAddRating = (rating) => {
   const { imdbID } = selectedMovie.value;
-  if (!movieRatings.value[imdbID]) {
-    movieRatings.value[imdbID] = [rating];
-  } else {
-    movieRatings.value[imdbID].push(rating)
-  }
+  Ratings.add(imdbID, rating);
   movies.value = movies.value.map(movie => (imdbID === movie.imdbID) ? { ...movie, rating: getMovieRating(imdbID) } : movie)
   modalValue.value = false;
 }
 const handleAddReview = (rewview) => {
   const { imdbID } = selectedMovie.value;
-  if (!movieReviews.value[imdbID]) {
-    movieReviews.value[imdbID] = [rewview];
-  } else {
-    movieReviews.value[imdbID].push(rewview)
-  }
+  Reviews.add(imdbID, rewview);
   movies.value = movies.value.map(movie => (imdbID === movie.imdbID) ? { ...movie, reviews: movieReviews.value[imdbID] } : movie)
   modalValue.value = false;
 }
 
-const { Ratings: movieRatings, Reviews: movieReviews } = useExtraMovieData();
+const { Ratings, Reviews } = useExtraMovieData();
+const movieRatings = Ratings.ref;
+const movieReviews = Reviews.ref;
 const getMovieRating = (imdbID) => {
   const ratings = movieRatings.value[imdbID];
 
