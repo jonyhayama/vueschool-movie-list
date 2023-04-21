@@ -1,5 +1,6 @@
 <script setup>
-import { useFetch, refDebounced, useStorage } from '@vueuse/core'
+import { useFetch, refDebounced } from '@vueuse/core'
+import { useExtraMovieData } from '@/composables/useExtraMovieData';
 import { ref, computed } from 'vue';
 import MovieModal from "@/components/MovieModal.vue";
 
@@ -42,7 +43,7 @@ const handleAddReview = (rewview) => {
   modalValue.value = false;
 }
 
-const movieRatings = useStorage("movie-list/movieRatings", {});
+const { Ratings: movieRatings, Reviews: movieReviews } = useExtraMovieData();
 const getMovieRating = (imdbID) => {
   const ratings = movieRatings.value[imdbID];
 
@@ -52,7 +53,6 @@ const getMovieRating = (imdbID) => {
 
   return (ratings.reduce((acc, i) => acc + i, 0) / ratings.length).toFixed(1).replace('.0', '');
 }
-const movieReviews = useStorage("movie-list/movieReviews", {});
 
 const url = computed(() => `http://www.omdbapi.com/?apikey=${API_KEY}&s=${search.value}&type=movie&page=${currentPage.value}&y=${year.value}`);
 const totalPages = computed(() => {
