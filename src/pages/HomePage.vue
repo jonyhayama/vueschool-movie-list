@@ -1,5 +1,5 @@
 <script setup>
-import { useFetch, refDebounced } from '@vueuse/core'
+import { useFetch, refDebounced, useStorage } from '@vueuse/core'
 import { ref, computed } from 'vue';
 import MovieModal from "@/components/MovieModal.vue";
 
@@ -32,11 +32,7 @@ const handleAddRating = (rating) => {
   modalValue.value = false;
 }
 
-const movieRatings = ref({
-  "tt1201607": [3],
-  "tt0241527": [0],
-  "tt0295297": [1, 2, 3]
-})
+const movieRatings = useStorage("movie-list/movieRatings", {});
 const getMovieRating = (imdbID) => {
   const ratings = movieRatings.value[imdbID];
 
