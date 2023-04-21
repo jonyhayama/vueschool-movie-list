@@ -22,22 +22,26 @@ const openMovieModal = (movie) => {
   selectedMovie.value = movie;
   modalValue.value = true;
 }
-const handleAddRating = (rating) => {
+const handleAdd = (key, value, updateAttribute) => {
   const { imdbID } = selectedMovie.value;
-  Ratings.add(imdbID, rating);
-  movies.value = movies.value.map(movie => (imdbID === movie.imdbID) ? { ...movie, rating: getMovieRating(imdbID) } : movie)
+  extraMovieData[key].add(imdbID, value);
+  movies.value = movies.value.map(movie => (imdbID === movie.imdbID) ? { ...movie, ...updateAttribute(imdbID) } : movie)
   modalValue.value = false;
 }
-const handleAddReview = (rewview) => {
-  const { imdbID } = selectedMovie.value;
-  Reviews.add(imdbID, rewview);
-  movies.value = movies.value.map(movie => (imdbID === movie.imdbID) ? { ...movie, reviews: movieReviews.value[imdbID] } : movie)
-  modalValue.value = false;
+const handleAddRating = (rating) => {
+  handleAdd('Ratings', rating, (imdbID) => ({
+    rating: getMovieRating(imdbID)
+  }));
+}
+const handleAddReview = (review) => {
+  handleAdd('Reviews', review, (imdbID) => ({
+    reviews: movieReviews.value[imdbID]
+  }));
 }
 
-const { Ratings, Reviews } = useExtraMovieData();
-const movieRatings = Ratings.ref;
-const movieReviews = Reviews.ref;
+const extraMovieData = useExtraMovieData();
+const movieRatings = extraMovieData.Ratings.ref;
+const movieReviews = extraMovieData.Reviews.ref;
 const getMovieRating = (imdbID) => {
   const ratings = movieRatings.value[imdbID];
 
