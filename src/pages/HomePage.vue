@@ -21,6 +21,16 @@ const openMovieModal = (movie) => {
   selectedMovie.value = movie;
   modalValue.value = true;
 }
+const handleAddRating = (rating) => {
+  const { imdbID } = selectedMovie.value;
+  if (!movieRatings.value[imdbID]) {
+    movieRatings.value[imdbID] = [rating];
+  } else {
+    movieRatings.value[imdbID].push(rating)
+  }
+  movies.value = movies.value.map(movie => (imdbID === movie.imdbID) ? { ...movie, rating: getMovieRating(imdbID) } : movie)
+  modalValue.value = false;
+}
 
 const movieRatings = ref({
   "tt1201607": [3],
@@ -143,7 +153,7 @@ const changePage = (event) => {
       </div>
     </template>
   </div>
-  <MovieModal :movie="selectedMovie" v-model:open="modalValue" />
+  <MovieModal :movie="selectedMovie" v-model:open="modalValue" @addRating="handleAddRating" />
 </template>
 
 <style lang="scss" scoped>

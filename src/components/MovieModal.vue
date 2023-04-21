@@ -7,7 +7,7 @@ const props = defineProps({
     default: false
   }
 })
-const emit = defineEmits(['update:open'])
+const emit = defineEmits(['update:open', 'addRating'])
 
 const { movie, open } = toRefs(props)
 
@@ -26,6 +26,13 @@ const rating = ref(5);
         <p>Released on {{ movie.Year }}</p>
         <p>IMDB id {{ movie.imdbID }}</p>
         <p>Rating: {{ movie.rating ?? 'not rated' }}</p>
+        <details>
+          <summary>Add Rating</summary>
+          <select v-model="rating">
+            <option v-for="i in 5" :key="i" :value="i">{{ i }}</option>
+          </select>
+          <button @click="emit('addRating', rating)">Save</button>
+        </details>
       </article>
     </template>
   </dialog>
