@@ -31,6 +31,16 @@ const handleAddRating = (rating) => {
   movies.value = movies.value.map(movie => (imdbID === movie.imdbID) ? { ...movie, rating: getMovieRating(imdbID) } : movie)
   modalValue.value = false;
 }
+const handleAddReview = (rewview) => {
+  const { imdbID } = selectedMovie.value;
+  if (!movieReviews.value[imdbID]) {
+    movieReviews.value[imdbID] = [rewview];
+  } else {
+    movieReviews.value[imdbID].push(rewview)
+  }
+  movies.value = movies.value.map(movie => (imdbID === movie.imdbID) ? { ...movie, reviews: movieReviews.value[imdbID] } : movie)
+  modalValue.value = false;
+}
 
 const movieRatings = useStorage("movie-list/movieRatings", {});
 const getMovieRating = (imdbID) => {
@@ -155,7 +165,8 @@ const changePage = (event) => {
       </div>
     </template>
   </div>
-  <MovieModal :movie="selectedMovie" v-model:open="modalValue" @addRating="handleAddRating" />
+  <MovieModal :movie="selectedMovie" v-model:open="modalValue" @addRating="handleAddRating"
+    @addReview="handleAddReview" />
 </template>
 
 <style lang="scss" scoped>

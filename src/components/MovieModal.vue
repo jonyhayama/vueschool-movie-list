@@ -7,11 +7,12 @@ const props = defineProps({
     default: false
   }
 })
-const emit = defineEmits(['update:open', 'addRating'])
+const emit = defineEmits(['update:open', 'addRating', 'addReview'])
 
 const { movie, open } = toRefs(props)
 
 const rating = ref(5);
+const review = ref("");
 </script>
 
 <template>
@@ -44,6 +45,11 @@ const rating = ref(5);
             <option v-for="i in 5" :key="i" :value="i">{{ i }}</option>
           </select>
           <button @click="emit('addRating', rating)">Save</button>
+        </details>
+        <details>
+          <summary>Add Review</summary>
+          <textarea v-model="review"></textarea>
+          <button @click="emit('addReview', review)">Save</button>
         </details>
       </article>
     </template>
