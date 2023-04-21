@@ -1,5 +1,6 @@
 <script setup>
-import { defineProps, toRefs, defineEmits, ref, watch } from "vue";
+import { defineProps, toRefs, defineEmits, ref, watch, computed } from "vue";
+import { useExtraMovieData } from "../composables/useExtraMovieData";
 const props = defineProps({
   movie: Object,
   open: {
@@ -11,8 +12,21 @@ const emit = defineEmits(['update:open', 'addRating', 'addReview'])
 
 const { movie, open } = toRefs(props)
 
+const { MyLists } = useExtraMovieData();
+const movieLists = computed(() => Object.keys(MyLists.ref.value || {}));
 const rating = ref(5);
 const review = ref("");
+const selectedListIndex = ref(0)
+const addToList = () => {
+  const list = movieLists.value[selectedListIndex.value];
+  if (MyLists.ref.value[list].find(m => m.imdbID === movie.value.imdbID)) {
+    alert('The movie is already on that list');
+    return;
+  }
+
+  MyLists.add(list, movie.value);
+  alert('Added successfully');
+}
 
 // when modal is opened, reset values
 watch(open, (newVal, oldVal) => {
@@ -58,6 +72,13 @@ watch(open, (newVal, oldVal) => {
           <summary>Add Review</summary>
           <textarea v-model="review"></textarea>
           <button @click="emit('addReview', review)">Save</button>
+        </details>
+        <details v-if="movieLists.length > 0">
+          <summary>Add to List</summary>
+          <select v-model="selectedListIndex">
+            <option v-for="(name, index) in movieLists" :key="index" :value="index">{{ name }}</option>
+          </select>
+          <button @click="addToList">Save</button>
         </details>
       </article>
     </template>
