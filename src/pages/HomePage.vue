@@ -1,6 +1,7 @@
 <script setup>
 import { useFetch, refDebounced } from '@vueuse/core'
 import { ref, computed } from 'vue';
+import MovieModal from "@/components/MovieModal.vue";
 
 const FIRST_MOVIE_RELEASE_YEAR = 1888;
 const CURRENT_YEAR = new Date().getFullYear();
@@ -13,6 +14,13 @@ const resultsPerPage = 10;
 const currentPage = ref(1);
 const totalResults = ref(0);
 const movies = ref([]);
+const modalValue = ref(false);
+const selectedMovie = ref(null);
+
+const openMovieModal = (movie) => {
+  selectedMovie.value = movie;
+  modalValue.value = true;
+}
 
 const movieRatings = ref({
   "tt1201607": [3],
@@ -65,7 +73,10 @@ const { isFetching, error, data: rawData } = useFetch(url, {
   },
   afterFetch(ctx) {
     totalResults.value = parseInt(ctx.data.totalResults, 10);
-    movies.value = ctx.data.Search;
+    movies.value = ctx.data.Search.map(movie => ({
+      ...movie,
+      rating: getMovieRating(movie.imdbID)
+    }));
 
     return ctx;
   }
@@ -109,10 +120,10 @@ const changePage = (event) => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="movie in movies">
+          <tr v-for="movie in movies" @click="openMovieModal(movie)">
             <td>{{ movie.Title }}</td>
             <td>{{ movie.Year }}</td>
-            <td>{{ getMovieRating(movie.imdbID) ?? 'not rated' }}</td>
+            <td>{{ movie.rating ?? 'not rated' }}</td>
           </tr>
         </tbody>
       </table>
@@ -132,6 +143,7 @@ const changePage = (event) => {
       </div>
     </template>
   </div>
+  <MovieModal :movie="selectedMovie" v-model:open="modalValue" />
 </template>
 
 <style lang="scss" scoped>
