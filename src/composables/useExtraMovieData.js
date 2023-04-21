@@ -22,8 +22,12 @@ class ExtraMovieData {
     }
   }
 
-  remove(imdbID) {
-    delete this.ref.value[imdbID];
+  remove(imdbID, index) {
+    if (index === undefined) {
+      delete this.ref.value[imdbID];
+    } else {
+      this.ref.value[imdbID].splice(index, 1);
+    }
   }
 }
 

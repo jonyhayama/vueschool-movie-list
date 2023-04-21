@@ -7,7 +7,7 @@ const props = defineProps({
     default: false
   }
 })
-const emit = defineEmits(['update:open', 'deleteList'])
+const emit = defineEmits(['update:open', 'deleteList', 'removeFromList'])
 const { list, open } = toRefs(props)
 </script>
 
@@ -20,9 +20,15 @@ const { list, open } = toRefs(props)
           List Details
         </header>
 
-        <ul>
-          <li v-for="movie in list.movies">{{ movie.Title }}</li>
-        </ul>
+        <table>
+          <tbody>
+            <tr v-for="movie in list.movies">
+              <td>{{ movie.Title }}</td>
+              <td><button style="padding: 5px; width: auto; margin: 0"
+                  @click="emit('removeFromList', movie)">Remove</button></td>
+            </tr>
+          </tbody>
+        </table>
         <button @click="emit('deleteList')">Delete list</button>
       </article>
     </template>

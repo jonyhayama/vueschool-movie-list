@@ -32,6 +32,14 @@ const deleteList = () => {
     modalValue.value = false;
   }
 }
+
+const removeFromList = (movie) => {
+  if (confirm('are you sure?')) {
+    const index = MyLists.ref.value[selectedList.value.name].findIndex(m => m.imdbID === movie.imdbID);
+    MyLists.remove(selectedList.value.name, index);
+    modalValue.value = false;
+  }
+}
 </script>
 
 <template>
@@ -59,6 +67,7 @@ const deleteList = () => {
         </tr>
       </tbody>
     </table>
-    <MyListModal :list="selectedList" v-model:open="modalValue" @deleteList="deleteList" />
+    <MyListModal :list="selectedList" v-model:open="modalValue" @deleteList="deleteList"
+      @removeFromList="removeFromList" />
   </div>
 </template>
