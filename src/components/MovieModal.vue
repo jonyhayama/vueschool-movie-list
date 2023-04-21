@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, toRefs, defineEmits, ref } from "vue";
+import { defineProps, toRefs, defineEmits, ref, watch } from "vue";
 const props = defineProps({
   movie: Object,
   open: {
@@ -13,6 +13,14 @@ const { movie, open } = toRefs(props)
 
 const rating = ref(5);
 const review = ref("");
+
+// when modal is opened, reset values
+watch(open, (newVal, oldVal) => {
+  if (newVal && !oldVal) {
+    rating.value = 5;
+    review.value = "";
+  }
+})
 </script>
 
 <template>
