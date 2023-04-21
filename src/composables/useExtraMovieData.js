@@ -21,6 +21,10 @@ class ExtraMovieData {
       this.ref.value[imdbID].push(value)
     }
   }
+
+  remove(imdbID) {
+    delete this.ref.value[imdbID];
+  }
 }
 
 export const useExtraMovieData = () => {

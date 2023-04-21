@@ -7,7 +7,7 @@ const props = defineProps({
     default: false
   }
 })
-const emit = defineEmits(['update:open'])
+const emit = defineEmits(['update:open', 'deleteList'])
 const { list, open } = toRefs(props)
 </script>
 
@@ -23,6 +23,7 @@ const { list, open } = toRefs(props)
         <ul>
           <li v-for="movie in list.movies">{{ movie.Title }}</li>
         </ul>
+        <button @click="emit('deleteList')">Delete list</button>
       </article>
     </template>
   </dialog>

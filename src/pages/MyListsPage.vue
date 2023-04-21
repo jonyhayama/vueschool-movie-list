@@ -25,6 +25,13 @@ const createList = () => {
   newListName.value = "";
   createListForm.value.removeAttribute('open')
 }
+
+const deleteList = () => {
+  if (confirm('are you sure?')) {
+    MyLists.remove(selectedList.value.name);
+    modalValue.value = false;
+  }
+}
 </script>
 
 <template>
@@ -52,6 +59,6 @@ const createList = () => {
         </tr>
       </tbody>
     </table>
-    <MyListModal :list="selectedList" v-model:open="modalValue" />
+    <MyListModal :list="selectedList" v-model:open="modalValue" @deleteList="deleteList" />
   </div>
 </template>
