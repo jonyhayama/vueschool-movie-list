@@ -14,8 +14,10 @@ class ExtraMovieData {
 
   add(imdbID, value) {
     if (!this.ref.value[imdbID]) {
-      this.ref.value[imdbID] = [value];
-    } else {
+      this.ref.value[imdbID] = [];
+    }
+
+    if (value !== undefined) {
       this.ref.value[imdbID].push(value)
     }
   }
