@@ -40,7 +40,7 @@ const getMovieRating = (imdbID) => {
     return null;
   }
 
-  return ratings.reduce((acc, i) => acc + i, 0) / ratings.length;
+  return (ratings.reduce((acc, i) => acc + i, 0) / ratings.length).toFixed(1).replace('.0', '');
 }
 
 const url = computed(() => `http://www.omdbapi.com/?apikey=${API_KEY}&s=${search.value}&type=movie&page=${currentPage.value}&y=${year.value}`);
